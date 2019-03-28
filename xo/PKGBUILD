@@ -1,0 +1,31 @@
+# Maintainer: Noah Santer <personal@mail.mossy-tech.com>
+pkgname=xo
+pkgver=0.3.2
+pkgrel=1
+pkgdesc="digital audio crossover toolkit"
+arch=('x86_64')
+url="https://github.com/mossy-tech/xo"
+license=('GPL3')
+makedepends=('ladspa' 'gperf')
+depends=('jack')
+source=("https://github.com/mossy-tech/$pkgname/archive/$pkgver.tar.gz"
+        "https://github.com/mossy-tech/$pkgname/releases/download/$pkgver/$pkgver.tar.gz.sig")
+md5sums=('89dea6e18471b48ebdf6ba391f387281'
+         'SKIP')
+validpgpkeys=('CC37683D1404CBDE6905EB21AD9E1AF747C00B93')
+
+build() {
+	cd "$pkgname-$pkgver"
+	make all NDEBUG=1 PREFIX=/usr SOCKPATH=/tmp/xod.sock VERSION='"'$pkgver'"'
+}
+
+package() {
+	cd "$pkgname-$pkgver"
+        make install DESTDIR="$pkgdir" PREFIX=/usr VERSION='"'$pkgver'"'
+        rmdir "$pkgdir/usr/share/xo"
+        install -d "$pkgdir/usr/lib/systemd/system"
+        install misc/xod@.service "$pkgdir/usr/lib/systemd/system"
+        install -d "$pkgdir/etc/xod"
+        touch "$pkgdir/etc/xod/default"
+}
+
