@@ -3,8 +3,8 @@
 mkdir -p chroot
 
 [ -d chroot/root ] || {
-    mkarchroot root base-devel || exit 1
+    mkarchroot chroot/root base-devel || exit 1
 }
 
 cd xo
-makechrootpkg -c -r ../chroot -- --sign
+makechrootpkg -c -r ../chroot
